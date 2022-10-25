@@ -3,7 +3,6 @@ package com.NeDonil.SequenceProcessor.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +19,12 @@ import java.util.Scanner;
 @Service
 public class SequenceProcessorService {
 
+    private final CacheManager cacheManager;
+
     @Autowired
     SequenceProcessorService(CacheManager manager){
         this.cacheManager = manager;
     }
-    private final CacheManager cacheManager;
 
     @Cacheable("max")
     public int maxNumber(String filename) throws FileNotFoundException {
@@ -169,7 +169,7 @@ public class SequenceProcessorService {
         }
     }
 
-    private ArrayList<Integer> readFile(String filename) throws FileNotFoundException{
+    private static ArrayList<Integer> readFile(String filename) throws FileNotFoundException{
         File file = new File(filename);
         Scanner reader = new Scanner(file);
 
@@ -183,11 +183,12 @@ public class SequenceProcessorService {
         return numbers;
     }
 
-    private static String getFileChecksum(String filename)
+    private static String  getFileChecksum(String filename)
     {
         try {
             File file = new File(filename);
             MessageDigest md5Digest;
+
             //Get file input stream for reading the file content
             FileInputStream fis = new FileInputStream(file);
 
@@ -218,7 +219,7 @@ public class SequenceProcessorService {
             return sb.toString();
 
         } catch (NoSuchAlgorithmException e){
-            System.out.println("Algo not found");
+            System.out.println("Algorithm not found");
         } catch(IOException e){
             System.out.println(e.getMessage());
         }

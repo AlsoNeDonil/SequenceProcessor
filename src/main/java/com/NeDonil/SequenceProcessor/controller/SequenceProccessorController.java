@@ -12,11 +12,11 @@ import java.util.Map;
 @RequestMapping("/process")
 public class SequenceProccessorController {
 
-    @Autowired
     private SequenceProcessorService service;
 
-    @GetMapping String tmp(){
-        return "good";
+    @Autowired
+    public SequenceProccessorController(SequenceProcessorService service){
+        this.service = service;
     }
 
     @PostMapping
