@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 @Service
@@ -37,13 +38,16 @@ public class SequenceProcessorService {
     }
 
     public int medianNumber(String filename) throws FileNotFoundException{
-        return 0; // ToDo median
+        var numbers = readFile(filename);
+        Collections.sort(numbers);
+
+        return numbers.get(numbers.size() / 2);
     }
 
     public double average(String filename) throws FileNotFoundException{
         var numbers = readFile(filename);
 
-        Integer sum = 0;
+        Long sum = 0L;
         for(Integer i : numbers){
             sum += i;
         }

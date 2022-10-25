@@ -3,12 +3,10 @@ package com.NeDonil.SequenceProcessor.controller;
 import com.NeDonil.SequenceProcessor.service.SequenceProcessorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/process")
@@ -17,49 +15,38 @@ public class SequenceProccessorController {
     @Autowired
     private SequenceProcessorService service;
 
-    @GetMapping("/max")
-    ResponseEntity maxNumber(@RequestParam String filename){
-        try {
-            return ResponseEntity.ok().body(service.maxNumber(filename));
-        } catch(FileNotFoundException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @GetMapping String tmp(){
+        return "good";
     }
 
-    @GetMapping("/min")
-    ResponseEntity minNumber(@RequestParam String filename){
-        try {
-            return ResponseEntity.ok().body(service.minNumber(filename));
-        } catch(FileNotFoundException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
+    @PostMapping
+    ResponseEntity process(@RequestBody Map<String,String> request){
 
-    @GetMapping("/average")
-    ResponseEntity averageNumber(@RequestParam String filename){
         try {
-            return ResponseEntity.ok().body(service.average(filename));
-        } catch(FileNotFoundException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
+            var action = request.get("action");
+            var filename = request.get("filename");
 
-    @GetMapping("/increase_sequence")
-    ResponseEntity increaseSequence(@RequestParam String filename){
-        try {
-            return ResponseEntity.ok().body(service.increaseSequences(filename));
+            switch (action) {
+                case "max":
+                    return ResponseEntity.ok().body(service.maxNumber(filename));
+                case "min":
+                    return ResponseEntity.ok().body(service.minNumber(filename));
+                case "average":
+                    return ResponseEntity.ok().body(service.average(filename));
+                case "median":
+                    return ResponseEntity.ok().body(service.medianNumber(filename));
+                case "increase_sequence":
+                    return ResponseEntity.ok().body(service.increaseSequences(filename));
+                case "decrease_sequence":
+                    return ResponseEntity.ok().body(service.decreaseSequences(filename));
+                default:
+                    return ResponseEntity.badRequest().body("Unknown operation");
+            }
         } catch(FileNotFoundException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("File not found");
+        } catch(NullPointerException e){
+            return ResponseEntity.badRequest().body("Action or filename is missing");
         }
     }
-    @GetMapping("/decrease_sequence")
-    ResponseEntity decreaseSequence(@RequestParam String filename){
-        try {
-            return ResponseEntity.ok().body(service.decreaseSequences(filename));
-        } catch(FileNotFoundException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
 
 }
